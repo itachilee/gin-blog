@@ -1,9 +1,13 @@
 package main
 
 import (
+	"collyD/pkg/setting"
 	"fmt"
+	"net/http"
 	"sync"
 	"time"
+
+	"github.com/gin-gonic/gin"
 )
 
 type Glimit struct {
@@ -45,4 +49,21 @@ func main() {
 		g.Run(goFunc)
 	}
 	wg.Wait()
+
+	router := gin.Default()
+	router.GET("/test", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{
+			"message": "test",
+		})
+
+	})
+
+	s := &http.Server{
+		Addr:           fmt.Sprintf(":%d", setting.HTTPPort),
+		Handler:        router,
+		ReadTimeout:    setting.ReadTimeout,
+		WriteTimeout:   setting.WriteTimeout,
+		MaxHeaderBytes: 1 << 20,
+	}
+	s.ListenAndServe()
 }
