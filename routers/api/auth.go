@@ -3,8 +3,8 @@ package api
 import (
 	"collyD/models"
 	"collyD/pkg/e"
+	"collyD/pkg/logging"
 	"collyD/pkg/util"
-	"log"
 	"net/http"
 
 	"github.com/astaxie/beego/validation"
@@ -40,7 +40,7 @@ func GetAuth(c *gin.Context) {
 
 	} else {
 		for _, err := range vaild.Errors {
-			log.Println(err.Key, err.Message)
+			logging.Info(err.Key, err.Message)
 		}
 
 	}
