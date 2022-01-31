@@ -2,12 +2,11 @@ package main
 
 import (
 	"collyD/pkg/setting"
+	"collyD/routers"
 	"fmt"
 	"net/http"
 	"sync"
-	"time"
-
-	"github.com/gin-gonic/gin"
+	// "sync"
 )
 
 type Glimit struct {
@@ -35,32 +34,25 @@ var wg = sync.WaitGroup{}
 
 func main() {
 
-	number := 10
-	g := New(10)
-	for i := 0; i < number; i++ {
-		wg.Add(1)
-		value := i
-		goFunc := func() {
-			// 做一些业务逻辑处理
-			fmt.Printf("go func: %d\n", value)
-			time.Sleep(time.Second)
-			wg.Done()
-		}
-		g.Run(goFunc)
-	}
-	wg.Wait()
-
-	router := gin.Default()
-	router.GET("/test", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-			"message": "test",
-		})
-
-	})
+	// number := 10
+	// g := New(10)
+	// for i := 0; i < number; i++ {
+	// 	wg.Add(1)
+	// 	value := i
+	// 	goFunc := func() {
+	// 		// 做一些业务逻辑处理
+	// 		fmt.Printf("go func: %d\n", value)
+	// 		time.Sleep(time.Second)
+	// 		wg.Done()
+	// 	}
+	// 	g.Run(goFunc)
+	// }
+	// wg.Wait()
+	routersInit := routers.InitRouter()
 
 	s := &http.Server{
 		Addr:           fmt.Sprintf(":%d", setting.HTTPPort),
-		Handler:        router,
+		Handler:        routersInit,
 		ReadTimeout:    setting.ReadTimeout,
 		WriteTimeout:   setting.WriteTimeout,
 		MaxHeaderBytes: 1 << 20,
