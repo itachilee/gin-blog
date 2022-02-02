@@ -4,8 +4,11 @@ import (
 	"collyD/pkg/setting"
 	"collyD/routers"
 	"fmt"
-	"net/http"
+	"log"
 	"sync"
+	"syscall"
+
+	"github.com/fvbock/endless"
 	// "sync"
 )
 
@@ -34,28 +37,19 @@ var wg = sync.WaitGroup{}
 
 func main() {
 
-	// number := 10
-	// g := New(10)
-	// for i := 0; i < number; i++ {
-	// 	wg.Add(1)
-	// 	value := i
-	// 	goFunc := func() {
-	// 		// 做一些业务逻辑处理
-	// 		fmt.Printf("go func: %d\n", value)
-	// 		time.Sleep(time.Second)
-	// 		wg.Done()
-	// 	}
-	// 	g.Run(goFunc)
-	// }
-	// wg.Wait()
-	routersInit := routers.InitRouter()
+	endless.DefaultReadTimeOut = setting.ReadTimeout
+	endless.DefaultWriteTimeOut = setting.WriteTimeout
+	endless.DefaultMaxHeaderBytes = 1 << 20
+	endPoint := fmt.Sprintf(":%d", setting.HTTPPort)
+	server := endless.NewServer(endPoint, routers.InitRouter())
 
-	s := &http.Server{
-		Addr:           fmt.Sprintf(":%d", setting.HTTPPort),
-		Handler:        routersInit,
-		ReadTimeout:    setting.ReadTimeout,
-		WriteTimeout:   setting.WriteTimeout,
-		MaxHeaderBytes: 1 << 20,
+	server.BeforeBegin = func(add string) {
+		log.Printf("Actual pid is %d", syscall.Getpid())
 	}
-	s.ListenAndServe()
+
+	err := server.ListenAndServe()
+	if err != nil {
+		log.Printf("Server err:%v", err)
+	}
+
 }
