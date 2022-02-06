@@ -1,4 +1,4 @@
-package main
+package util
 
 import (
 	"collyD/models"
@@ -8,16 +8,16 @@ import (
 	"github.com/robfig/cron"
 )
 
-func main() {
+func InitCron() {
 	log.Println("Starting ...")
 
 	c := cron.New()
 
-	c.AddFunc("* * * * * *", func() {
+	c.AddFunc("* 1 * * * *", func() {
 		log.Println("Running models.CleanAllTag...")
 		models.CleanAllTag()
 	})
-	c.AddFunc("* * * * * *", func() {
+	c.AddFunc("* 1 * * * *", func() {
 		log.Println("Running models.CleanAllArticle...")
 		models.CleanAllArticle()
 	})
