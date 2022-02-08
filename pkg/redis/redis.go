@@ -2,7 +2,9 @@ package redis
 
 import (
 	"context"
+	"fmt"
 	"log"
+	"time"
 
 	"github.com/go-redis/redis/v8"
 )
@@ -13,18 +15,26 @@ var RedisClient *redis.Client
 
 func SetUp() {
 	RedisClient = redis.NewClient(&redis.Options{
-		Addr:     "114.117.161.250:9380",
+		Addr:     "114.117.161.250:9280",
 		Password: "blackb", // no password set
 		DB:       0,        // use default DB
 	})
-	err := RedisClient.Set(ctx, "key", "value", 0).Err()
+
+	err := Set("key", "value", 0)
 	if err != nil {
-		log.Panicln(err)
+		panic(err)
 	}
+
+	val, err := Get("key")
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println("key", val)
+	log.Println("redis test ok")
 }
 
-func Set(key string, data interface{}, time int) error {
-	err := RedisClient.Set(ctx, "key", "value", 0).Err()
+func Set(key string, data interface{}, time time.Duration) error {
+	err := RedisClient.Set(ctx, "key", "value", time).Err()
 	return err
 }
 
