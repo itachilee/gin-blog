@@ -28,7 +28,7 @@ func SetUp() {
 		databaseSetting.Host,
 		databaseSetting.Name,
 	)
-	fmt.Printf("%s :", connStr)
+	log.Printf("使用数据库连接:%s", connStr)
 	db, err = gorm.Open(databaseSetting.Type, connStr)
 
 	if err != nil {

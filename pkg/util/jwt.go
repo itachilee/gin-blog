@@ -2,9 +2,10 @@ package util
 
 import (
 	"collyD/pkg/setting"
+	"fmt"
 	"time"
 
-	jwt "github.com/dgrijalva/jwt-go"
+	jwt "github.com/golang-jwt/jwt"
 )
 
 var jwtSecret = []byte(setting.AppSetting.JwtSecret)
@@ -27,7 +28,10 @@ func GenerateToken(username, password string) (string, error) {
 			Issuer:    "gin-blog",
 		},
 	}
-	tokenClaims := jwt.NewWithClaims(jwt.SigningMethodES256, Claims)
+	tokenClaims := jwt.NewWithClaims(jwt.SigningMethodHS256, Claims)
+	fmt.Println(setting.AppSetting.JwtSecret)
+	jwtSecret = []byte(setting.AppSetting.JwtSecret)
+	fmt.Println(jwtSecret)
 	token, err := tokenClaims.SignedString(jwtSecret)
 	return token, err
 }
