@@ -20,15 +20,17 @@ type Model struct {
 }
 
 func SetUp() {
-
+	var err error
 	databaseSetting := setting.DatabaseSetting
-
-	db, err := gorm.Open(databaseSetting.Type, fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8&parseTime=True&loc=Local",
+	var connStr string = fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8&parseTime=True&loc=Local",
 		databaseSetting.User,
 		databaseSetting.Password,
 		databaseSetting.Host,
 		databaseSetting.Name,
-	))
+	)
+	fmt.Printf("%s :", connStr)
+	db, err = gorm.Open(databaseSetting.Type, connStr)
+
 	if err != nil {
 		log.Println(err)
 	}

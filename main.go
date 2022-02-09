@@ -3,7 +3,6 @@ package main
 import (
 	"collyD/models"
 	"collyD/pkg/logging"
-	"collyD/pkg/mqtt"
 	"collyD/pkg/redis"
 	"collyD/pkg/setting"
 	"collyD/routers"
@@ -42,7 +41,7 @@ func main() {
 	models.SetUp()
 	logging.SetUp()
 	redis.SetUp()
-	go mqtt.SetUp()
+	// go mqtt.SetUp()
 	// endless.DefaultReadTimeOut = setting.ServerSetting.ReadTimeout
 	// endless.DefaultWriteTimeOut = setting.ServerSetting.WriteTimeout
 	// endless.DefaultMaxHeaderBytes = 1 << 20

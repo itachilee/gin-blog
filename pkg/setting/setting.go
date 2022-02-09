@@ -45,6 +45,17 @@ type Database struct {
 
 var DatabaseSetting = &Database{}
 
+type Redis struct {
+	Addr     string
+	Password string
+	Db       int
+}
+
+var RedisSetting = &Redis{}
+
+type Mqtt struct {
+}
+
 func Setup() {
 	Cfg, err := ini.Load("conf/app.ini")
 	if err != nil {

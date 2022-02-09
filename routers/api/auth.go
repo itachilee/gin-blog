@@ -5,6 +5,7 @@ import (
 	"collyD/pkg/e"
 	"collyD/pkg/logging"
 	"collyD/pkg/util"
+	"fmt"
 	"net/http"
 
 	"github.com/astaxie/beego/validation"
@@ -19,13 +20,17 @@ type auth struct {
 func GetAuth(c *gin.Context) {
 	username := c.Query("username")
 	password := c.Query("password")
+	fmt.Printf("sadad %s%s", username, password)
 	vaild := validation.Validation{}
 	a := auth{Username: username, Password: password}
 	ok, _ := vaild.Valid(&a)
 	data := make(map[string]interface{})
 	code := e.INVALID_PARAMS
 	if ok {
-		isExist := models.CheckAuth(username, password)
+		isExist, err := models.CheckAuth(username, password)
+		if err != nil {
+			fmt.Printf("%v", err)
+		}
 		if isExist {
 			token, err := util.GenerateToken(username, password)
 			if err != nil {
