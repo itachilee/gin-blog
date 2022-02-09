@@ -2,7 +2,6 @@ package util
 
 import (
 	"collyD/pkg/setting"
-	"fmt"
 	"time"
 
 	jwt "github.com/golang-jwt/jwt"
@@ -11,27 +10,25 @@ import (
 var jwtSecret = []byte(setting.AppSetting.JwtSecret)
 
 type Claims struct {
+	Id       int    `json:"id"`
 	Username string `json:"username"`
-	Password string `json:"password"`
 	jwt.StandardClaims
 }
 
-func GenerateToken(username, password string) (string, error) {
+func GenerateToken(id int, username string) (string, error) {
 	nowTime := time.Now()
 	expireTime := nowTime.Add(3 * time.Hour)
 
 	Claims := Claims{
+		id,
 		username,
-		password,
 		jwt.StandardClaims{
 			ExpiresAt: expireTime.Unix(),
 			Issuer:    "gin-blog",
 		},
 	}
 	tokenClaims := jwt.NewWithClaims(jwt.SigningMethodHS256, Claims)
-	fmt.Println(setting.AppSetting.JwtSecret)
-	jwtSecret = []byte(setting.AppSetting.JwtSecret)
-	fmt.Println(jwtSecret)
+
 	token, err := tokenClaims.SignedString(jwtSecret)
 	return token, err
 }
