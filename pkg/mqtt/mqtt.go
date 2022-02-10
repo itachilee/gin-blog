@@ -1,7 +1,9 @@
 package mqtt
 
 import (
+	"collyD/pkg/setting"
 	"fmt"
+	"math/rand"
 	"time"
 
 	mqtt "github.com/eclipse/paho.mqtt.golang"
@@ -45,24 +47,42 @@ func sub(client mqtt.Client) {
 	fmt.Printf("Subscribed to topic: %s", topic)
 }
 
+var letters = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
+
+func randStr(n int) string {
+	b := make([]rune, n)
+	for i := range b {
+		b[i] = letters[rand.Intn(len(letters))]
+	}
+	return string(b)
+}
 func SetUp() {
-	var c = make(chan bool)
-	var broker = "127.0.0.1"
-	var port = 1883
-	opts := mqtt.NewClientOptions()
-	opts.AddBroker(fmt.Sprintf("tcp://%s:%d", broker, port))
-	opts.SetClientID("go_mqtt_client")
-	opts.SetUsername("lx")
-	opts.SetPassword("123456")
-	opts.SetDefaultPublishHandler(messagePubHandler)
-	opts.OnConnect = connectHandler
-	opts.OnConnectionLost = connectLostHandler
-	client := mqtt.NewClient(opts)
+	// var c = make(chan bool)
+	client, err := createMqttClient()
+	if err != nil {
+		panic(err)
+	}
 	if token := client.Connect(); token.Wait() && token.Error() != nil {
-		c <- true
+		// c <- true
 		panic(token.Error())
 	}
 	sub(client)
 	publish(client)
-	<-c
+	// <-c
+}
+
+// 创建一个mqtt连接
+func createMqttClient() (mqtt.Client, error) {
+	var broker = setting.MqttSetting.Host
+	var port = setting.MqttSetting.Port
+	opts := mqtt.NewClientOptions()
+	opts.AddBroker(fmt.Sprintf("tcp://%s:%d", broker, port))
+	opts.SetClientID("go-" + randStr(10))
+	opts.SetUsername(setting.MqttSetting.Username)
+	opts.SetPassword(setting.MqttSetting.Password)
+	opts.SetDefaultPublishHandler(messagePubHandler)
+	opts.OnConnect = connectHandler
+	opts.OnConnectionLost = connectLostHandler
+	client := mqtt.NewClient(opts)
+	return client, nil
 }

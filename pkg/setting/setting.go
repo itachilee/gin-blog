@@ -1,7 +1,6 @@
 package setting
 
 import (
-	"fmt"
 	"log"
 	"time"
 
@@ -47,7 +46,9 @@ type Database struct {
 var DatabaseSetting = &Database{}
 
 type Redis struct {
-	Addr     string
+	Host     string
+	Port     int
+	Username string
 	Password string
 	Db       int
 }
@@ -55,7 +56,13 @@ type Redis struct {
 var RedisSetting = &Redis{}
 
 type Mqtt struct {
+	Host     string
+	Port     int
+	Username string
+	Password string
 }
+
+var MqttSetting = &Mqtt{}
 
 func Setup() {
 	Cfg, err := ini.Load("conf/app.ini")
@@ -67,7 +74,6 @@ func Setup() {
 	if err != nil {
 		log.Fatalf("Cfg.MapTo AppSetting err: %v", err)
 	}
-	fmt.Printf("AppSetting.JwtSecret: %s", AppSetting.JwtSecret)
 
 	AppSetting.ImageMaxSize = AppSetting.ImageMaxSize * 1024 * 1024
 
@@ -82,5 +88,13 @@ func Setup() {
 	err = Cfg.Section("database").MapTo(DatabaseSetting)
 	if err != nil {
 		log.Fatalf("Cfg.MapTo DatabaseSetting err: %v", err)
+	}
+	err = Cfg.Section("redis").MapTo(RedisSetting)
+	if err != nil {
+		log.Fatalf("Cfg.MapTo RedisSetting err: %v", err)
+	}
+	err = Cfg.Section("mqtt").MapTo(MqttSetting)
+	if err != nil {
+		log.Fatalf("Cfg.MapTo MqttSetting err: %v", err)
 	}
 }
