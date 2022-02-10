@@ -35,4 +35,57 @@ const (
 	BQL_ADVERTISE_INFO          = 0x67
 	BQL_TAKE_MEAL               = 0x68
 	BQL_DEVICE_ERROR            = 0x7F
+
+	NotFound = 0xFF
 )
+
+var MsgFlags = map[int]int{
+	ZMJ_HEART_BEAT:              0x30,
+	ZMJ_MATERIAL_COMMODITY:      0x31,
+	ZMJ_ORDER_MATERIAL_DELIVERY: 0x32,
+	ZMJ_ORDER_GOODS_DELIVERY:    0x34,
+	ZMJ_ORDER_PUSH:              0x35,
+	ZMJ_ORDER_STATUS_CHANGE:     0x36,
+	ZMJ_ADVERTISE_INFO:          0x37,
+	ZMJ_TAKE_MEAL:               0x38,
+	ZMJ_ALLOW_PUSH_ORDER:        0x39,
+	ZMJ_DEVICE_ERROR:            0x4F,
+
+	MORKS_HEART_BEAT:              0x80,
+	MORKS_MATERIAL_COMMODITY:      0x81,
+	MORKS_ORDER_MATERIAL_DELIVERY: 0x82,
+	MORKS_ORDER_PUSH:              0x85,
+	MORKS_ORDER_STATUS_CHANGE:     0x86,
+	MORKS_ADVERTISE_INFO:          0x87,
+	MORKS_TAKE_MEAL:               0x88,
+	MORKS_ALLOW_PUSH_ORDER:        0x89,
+	MORKS_PUSH_INGREDIENTS:        0x8A,
+	MORKS_PUSH_INGREDIENTS_RECV:   0x8B,
+	MORKS_DEVICE_ERROR:            0x9f,
+
+	BQL_HEART_BEAT:         0x60,
+	BQL_MATERIAL_COMMODITY: 0x61,
+
+	BQL_ORDER_MATERIAL_DELIVERY: 0x62,
+	BQL_ORDER_GOODS_DELIVERY:    0x63,
+	BQL_ORDER_PUSH:              0x64,
+	BQL_ORDER_STATUS_CHANGE:     0x65,
+	BQL_ADVERTISE_INFO:          0x67,
+	BQL_TAKE_MEAL:               0x68,
+	BQL_DEVICE_ERROR:            0x7F,
+
+	NotFound: 0xFF,
+}
+
+func GetMessageDesc(messageId int) int {
+	msg, ok := MsgFlags[messageId]
+	if ok {
+		return msg
+	}
+	return MsgFlags[NotFound]
+}
+
+func CheckMessage(messageId int) bool {
+	_, ok := MsgFlags[messageId]
+	return ok
+}
