@@ -1,9 +1,9 @@
 package api
 
 import (
-	"collyD/pkg/e"
-	"collyD/pkg/logging"
-	"collyD/pkg/upload"
+	"github.com/itachilee/ginblog/pkg/e"
+	"github.com/itachilee/ginblog/pkg/logging"
+	"github.com/itachilee/ginblog/pkg/upload"
 	"log"
 	"net/http"
 

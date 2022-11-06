@@ -1,11 +1,11 @@
 package upload
 
 import (
-	"collyD/pkg/file"
-	"collyD/pkg/logging"
-	"collyD/pkg/setting"
-	"collyD/pkg/util"
 	"fmt"
+	"github.com/itachilee/ginblog/pkg/file"
+	"github.com/itachilee/ginblog/pkg/logging"
+	"github.com/itachilee/ginblog/pkg/setting"
+	"github.com/itachilee/ginblog/pkg/util"
 	"log"
 	"mime/multipart"
 	"os"

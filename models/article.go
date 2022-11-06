@@ -1,13 +1,11 @@
 package models
 
 import (
-	"time"
-
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 )
 
 type Article struct {
-	Model
+	gorm.Model
 	TagId      int    `json:"tag_id" gorm:"index"`
 	Tag        Tag    `json:"tag"`
 	Title      string `json:"title"`
@@ -18,19 +16,9 @@ type Article struct {
 	State      int    `json:"state"`
 }
 
-func (a *Article) BeforeCreate(scope *gorm.Scope) error {
-	scope.SetColumn("CreatedOn", time.Now().Unix())
-	return nil
-}
-
-func (a *Article) BeforeUpdate(scope *gorm.Scope) error {
-	scope.SetColumn("ModifiedOn", time.Now().Unix())
-	return nil
-}
-
 func ExistArticleByID(id int) bool {
 	var article Article
-	db.Select("id").Where("id = ?", id).First(&article)
+	DB.Select("id").Where("id = ?", id).First(&article)
 
 	if article.ID > 0 {
 		return true
@@ -39,33 +27,32 @@ func ExistArticleByID(id int) bool {
 	return false
 }
 
-func GetArticleTotal(maps interface{}) (count int) {
-	db.Model(&Article{}).Where(maps).Count(&count)
+func GetArticleTotal(maps interface{}) (count int64) {
+	DB.Model(&Article{}).Where(maps).Count(&count)
 
 	return
 }
 
 func GetArticles(pageNum int, pageSize int, maps interface{}) (articles []Article) {
-	db.Preload("Tag").Where(maps).Offset(pageNum).Limit(pageSize).Find(&articles)
+	DB.Preload("Tag").Where(maps).Offset(pageNum).Limit(pageSize).Find(&articles)
 
 	return
 }
 
 func GetArticle(id int) (article Article) {
-	db.Where("id = ?", id).First(&article)
-	db.Model(&article).Related(&article.Tag)
+	DB.Where("id = ?", id).First(&article)
 
 	return
 }
 
 func EditArticle(id int, data interface{}) bool {
-	db.Model(&Article{}).Where("id = ?", id).Updates(data)
+	DB.Model(&Article{}).Where("id = ?", id).Updates(data)
 
 	return true
 }
 
 func AddArticle(data map[string]interface{}) bool {
-	db.Create(&Article{
+	DB.Create(&Article{
 		TagId:     data["tag_id"].(int),
 		Title:     data["title"].(string),
 		Desc:      data["desc"].(string),
@@ -78,13 +65,13 @@ func AddArticle(data map[string]interface{}) bool {
 }
 
 func DeleteArticle(id int) bool {
-	db.Where("id = ?", id).Delete(Article{})
+	DB.Where("id = ?", id).Delete(Article{})
 
 	return true
 }
 
 func CleanAllArticle() bool {
-	db.Unscoped().Where("deleted_on != ? ", 0).Delete(&Article{})
+	DB.Unscoped().Where("deleted_on != ? ", 0).Delete(&Article{})
 
 	return true
 }

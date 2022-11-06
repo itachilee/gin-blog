@@ -1,7 +1,7 @@
 package util
 
 import (
-	"collyD/models"
+	"github.com/itachilee/ginblog/models"
 	"log"
 	"time"
 

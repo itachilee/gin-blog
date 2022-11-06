@@ -1,7 +1,7 @@
 package util
 
 import (
-	"collyD/pkg/setting"
+	"github.com/itachilee/ginblog/pkg/setting"
 	"time"
 
 	jwt "github.com/golang-jwt/jwt"

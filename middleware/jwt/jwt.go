@@ -1,8 +1,8 @@
 package jwt
 
 import (
-	"collyD/pkg/e"
-	"collyD/pkg/util"
+	"github.com/itachilee/ginblog/pkg/e"
+	"github.com/itachilee/ginblog/pkg/util"
 	"net/http"
 	"time"
 

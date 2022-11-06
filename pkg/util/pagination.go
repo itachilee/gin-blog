@@ -1,9 +1,8 @@
 package util
 
 import (
-	"collyD/pkg/setting"
-
 	"github.com/gin-gonic/gin"
+	"github.com/itachilee/ginblog/pkg/setting"
 	"github.com/unknwon/com"
 )
 

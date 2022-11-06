@@ -1,24 +1,24 @@
 package main
 
 import (
-	"collyD/models"
-	"collyD/pkg/logging"
-	"collyD/pkg/mqtt"
-	"collyD/pkg/redis"
-	"collyD/pkg/setting"
-	"collyD/routers"
 	"fmt"
+	"github.com/itachilee/ginblog/models"
+	"github.com/itachilee/ginblog/pkg/redis"
+	"github.com/itachilee/ginblog/pkg/setting"
+	"github.com/itachilee/ginblog/routers"
 	"net/http"
 	// "sync"
 )
 
-func main() {
+func init() {
 
 	setting.Setup()
-	models.SetUp()
-	logging.SetUp()
-	redis.SetUp()
-	go mqtt.SetUp()
+	models.InitDb()
+	redis.InitRedis()
+}
+
+func main() {
+
 	// endless.DefaultReadTimeOut = setting.ServerSetting.ReadTimeout
 	// endless.DefaultWriteTimeOut = setting.ServerSetting.WriteTimeout
 	// endless.DefaultMaxHeaderBytes = 1 << 20

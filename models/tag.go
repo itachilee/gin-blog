@@ -1,13 +1,11 @@
 package models
 
 import (
-	"time"
-
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 )
 
 type Tag struct {
-	Model
+	gorm.Model
 	Name       string `json:"name"`
 	CreatedBy  string `json:"created_by"`
 	ModifiedBy string `json:"modified_by"`
@@ -15,18 +13,18 @@ type Tag struct {
 }
 
 func GetTags(pageNum int, pageSize int, maps interface{}) (tags []Tag) {
-	db.Where(maps).Offset(pageNum).Limit(pageSize).Find(&tags)
+	DB.Where(maps).Offset(pageNum).Limit(pageSize).Find(&tags)
 	return
 }
 
-func GetTagTotal(maps interface{}) (count int) {
-	db.Model(&Tag{}).Where(maps).Count(&count)
+func GetTagTotal(maps interface{}) (count int64) {
+	DB.Model(&Tag{}).Where(maps).Count(&count)
 	return
 }
 
 func ExistTagByName(name string) bool {
 	var tag Tag
-	db.Select("id").Where("name = ?", name).First(&tag)
+	DB.Select("id").Where("name = ?", name).First(&tag)
 	if tag.ID > 0 {
 		return true
 	}
@@ -34,7 +32,7 @@ func ExistTagByName(name string) bool {
 }
 
 func AddTag(name string, state int, createdBy string) bool {
-	db.Create(&Tag{
+	DB.Create(&Tag{
 		Name:      name,
 		State:     state,
 		CreatedBy: createdBy,
@@ -42,19 +40,9 @@ func AddTag(name string, state int, createdBy string) bool {
 	return true
 }
 
-func (tag *Tag) BeforeCreate(scope *gorm.Scope) error {
-	scope.SetColumn("CreatedOn", time.Now().Unix())
-	return nil
-}
-
-func (tag *Tag) BeforeUpdated(scope *gorm.Scope) error {
-	scope.SetColumn("ModifiedOn", time.Now().Unix())
-	return nil
-}
-
 func ExistTagByID(id int) bool {
 	var tag Tag
-	db.Select("id").Where("id = ?", id).First(&tag)
+	DB.Select("id").Where("id = ?", id).First(&tag)
 	if tag.ID > 0 {
 		return true
 	}
@@ -63,18 +51,18 @@ func ExistTagByID(id int) bool {
 }
 
 func DeleteTag(id int) bool {
-	db.Where("id = ?", id).Delete(&Tag{})
+	DB.Where("id = ?", id).Delete(&Tag{})
 
 	return true
 }
 
 func EditTag(id int, data interface{}) bool {
-	db.Model(&Tag{}).Where("id = ?", id).Updates(data)
+	DB.Model(&Tag{}).Where("id = ?", id).Updates(data)
 
 	return true
 }
 
 func CleanAllTag() bool {
-	db.Unscoped().Where("deleted_on !=?", 0).Delete(&Tag{})
+	DB.Unscoped().Where("deleted_on !=?", 0).Delete(&Tag{})
 	return true
 }

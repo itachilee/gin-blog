@@ -1,10 +1,10 @@
 package v1
 
 import (
-	"collyD/models"
-	"collyD/pkg/e"
-	"collyD/pkg/setting"
-	"collyD/pkg/util"
+	"github.com/itachilee/ginblog/models"
+	"github.com/itachilee/ginblog/pkg/e"
+	"github.com/itachilee/ginblog/pkg/setting"
+	"github.com/itachilee/ginblog/pkg/util"
 	"net/http"
 
 	"github.com/astaxie/beego/validation"

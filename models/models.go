@@ -1,107 +1,53 @@
 package models
 
 import (
-	"collyD/pkg/setting"
 	"fmt"
 	"log"
-	"time"
+	"strings"
 
-	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/mysql"
+	setting "github.com/itachilee/ginblog/pkg/setting"
+
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
+	"gorm.io/gorm/schema"
 )
 
-var db *gorm.DB
+var DB *gorm.DB
 
-type Model struct {
-	ID         int `gorm:"primary_key" json:"id"`
-	CreatedOn  int `json:"create_on"`
-	ModifiedOn int `json:"modified_on"`
-	DeletedOn  int `json:"deleted_on"`
-}
-
-func SetUp() {
+// Setup initializes the database instance
+func InitDb() {
 	var err error
-	databaseSetting := setting.DatabaseSetting
-	var connStr string = fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8&parseTime=True&loc=Local",
-		databaseSetting.User,
-		databaseSetting.Password,
-		databaseSetting.Host,
-		databaseSetting.Name,
-	)
-	log.Printf("使用数据库连接:%s", connStr)
-	db, err = gorm.Open(databaseSetting.Type, connStr)
-
+	DB, err = gorm.Open(mysql.New(mysql.Config{
+		DSN: fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=True&loc=Local",
+			setting.DatabaseSetting.User,
+			setting.DatabaseSetting.Password,
+			setting.DatabaseSetting.Host,
+			setting.DatabaseSetting.Port,
+			setting.DatabaseSetting.Name), // data source name
+		DefaultStringSize:         256,   // default size for string fields
+		DisableDatetimePrecision:  true,  // disable datetime precision, which not supported before MySQL 5.6
+		DontSupportRenameIndex:    true,  // drop & create when rename index, rename index not supported before MySQL 5.7, MariaDB
+		DontSupportRenameColumn:   true,  // `change` when rename column, rename column not supported before MySQL 8, MariaDB
+		SkipInitializeWithVersion: false, // auto configure based on currently MySQL version
+	}), &gorm.Config{
+		NamingStrategy: schema.NamingStrategy{
+			TablePrefix:   "blog_",                           // table name prefix, table for `User` would be `t_users`
+			SingularTable: true,                              // use singular table name, table for `User` would be `user` with this option enabled
+			NoLowerCase:   true,                              // skip the snake_casing of names
+			NameReplacer:  strings.NewReplacer("CID", "Cid"), // use name replacer to change struct/field name before convert it to db name
+		},
+	})
 	if err != nil {
-		log.Println(err)
+		log.Fatalf("models.Setup err: %v", err)
 	}
-	gorm.DefaultTableNameHandler = func(db *gorm.DB, defaultTableName string) string {
-		return databaseSetting.TablePrefix + defaultTableName
-	}
-	db.SingularTable(true)
-	db.LogMode(true)
-	db.DB().SetMaxIdleConns(10)
-	db.DB().SetMaxOpenConns(100)
-	db.Callback().Create().Replace("gorm:update_time_stamp", updateTimeStampForCreateCallback)
-	db.Callback().Update().Replace("gorm:update_time_stamp", updateTimeStampForUpdateCallback)
-	db.Callback().Delete().Replace("gorm:delete", deleteCallback)
+
+	//db.AutoMigrate(&Gushici{})
+
 }
 
-func CloseDB() {
-	defer db.Close()
-}
-
-func updateTimeStampForCreateCallback(scope *gorm.Scope) {
-	if !scope.HasError() {
-		nowTime := time.Now().Unix()
-		if createTimeFiled, ok := scope.FieldByName("CreatedOn"); ok {
-			if createTimeFiled.IsBlank {
-				createTimeFiled.Set(nowTime)
-			}
-		}
-		if modifyTimeField, ok := scope.FieldByName("ModifiedOn"); ok {
-			if modifyTimeField.IsBlank {
-				modifyTimeField.Set(nowTime)
-			}
-		}
-	}
-}
-
-func updateTimeStampForUpdateCallback(scope *gorm.Scope) {
-	if _, ok := scope.Get("grom:update_column"); !ok {
-		scope.SetColumn("ModifiedOn", time.Now().Unix())
-	}
-}
-
-func deleteCallback(scope *gorm.Scope) {
-	if !scope.HasError() {
-		var extraOption string
-		if str, ok := scope.Get("gorm:delete_option"); ok {
-			extraOption = fmt.Sprint(str)
-		}
-
-		deletedOnField, hasDeletedOnField := scope.FieldByName("DeletedOn")
-		if !scope.Search.Unscoped && hasDeletedOnField {
-			scope.Raw(fmt.Sprintf(
-				"UPDATE %v set %v=%v%v%v",
-				scope.QuotedTableName(),
-				scope.Quote(deletedOnField.DBName),
-				scope.AddToVars(time.Now().Unix()),
-				addExtraSpaceIfExist(scope.CombinedConditionSql()),
-				addExtraSpaceIfExist(extraOption),
-			)).Exec()
-		} else {
-			scope.Raw(fmt.Sprintf(
-				"DELETE FROM %v%v%v",
-				scope.QuotedTableName(),
-				addExtraSpaceIfExist(scope.CombinedConditionSql()),
-				addExtraSpaceIfExist(extraOption),
-			)).Exec()
-		}
-	}
-}
-
+// addExtraSpaceIfExist adds a separator
 func addExtraSpaceIfExist(str string) string {
-	if len(str) != 0 {
+	if str != "" {
 		return " " + str
 	}
 	return ""

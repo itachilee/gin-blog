@@ -7,17 +7,20 @@ import (
 	"time"
 
 	"github.com/go-redis/redis/v8"
+	setting "github.com/itachilee/ginblog/pkg/setting"
 )
 
 var ctx = context.Background()
 
-var RedisClient *redis.Client
+var Client *redis.Client
 
-func SetUp() {
-	RedisClient = redis.NewClient(&redis.Options{
-		Addr:     "114.117.161.250:9280",
-		Password: "blackb", // no password set
-		DB:       0,        // use default DB
+func InitRedis() {
+	fmt.Println(setting.RedisSetting.Password)
+	Client = redis.NewClient(&redis.Options{
+		Addr:     setting.RedisSetting.Addr,
+		Username: setting.RedisSetting.Username,
+		Password: setting.RedisSetting.Password, // no password set
+		DB:       0,                             // use default DB
 	})
 
 	err := Set("key", "value", 0)
@@ -34,12 +37,12 @@ func SetUp() {
 }
 
 func Set(key string, data interface{}, time time.Duration) error {
-	err := RedisClient.Set(ctx, "key", "value", time).Err()
+	err := Client.Set(ctx, "key", "value", time).Err()
 	return err
 }
 
 func Get(key string) (string, error) {
-	val, err := RedisClient.Get(ctx, key).Result()
+	val, err := Client.Get(ctx, key).Result()
 	if err != nil {
 		panic(err)
 	}

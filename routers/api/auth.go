@@ -1,11 +1,11 @@
 package api
 
 import (
-	"collyD/models"
-	"collyD/pkg/e"
-	"collyD/pkg/logging"
-	"collyD/pkg/util"
 	"fmt"
+	"github.com/itachilee/ginblog/models"
+	"github.com/itachilee/ginblog/pkg/e"
+	"github.com/itachilee/ginblog/pkg/logging"
+	"github.com/itachilee/ginblog/pkg/util"
 	"net/http"
 
 	"github.com/astaxie/beego/validation"

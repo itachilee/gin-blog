@@ -1,11 +1,11 @@
 package routers
 
 import (
-	"collyD/middleware/jwt"
-	"collyD/pkg/setting"
-	"collyD/pkg/upload"
-	"collyD/routers/api"
-	v1 "collyD/routers/api/v1"
+	"github.com/itachilee/ginblog/middleware/jwt"
+	"github.com/itachilee/ginblog/pkg/setting"
+	"github.com/itachilee/ginblog/pkg/upload"
+	"github.com/itachilee/ginblog/routers/api"
+	v1 "github.com/itachilee/ginblog/routers/api/v1"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
