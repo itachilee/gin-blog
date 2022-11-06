@@ -2,31 +2,31 @@ package main
 
 import (
 	"fmt"
-	"github.com/itachilee/ginblog/models"
-	"github.com/itachilee/ginblog/pkg/setting"
+	models2 "github.com/itachilee/ginblog/internal/models"
+	"github.com/itachilee/ginblog/internal/setting"
 	"testing"
 )
 
 func init() {
 
 	setting.Setup()
-	models.InitDb()
+	models2.InitDb()
 }
 
 func Test_belongs_to(t *testing.T) {
 
-	user := models.User{
+	user := models2.User{
 		Name:      "test1",
 		CompanyID: 1,
-		Company:   models.Company{ID: 1, Name: "test"},
+		Company:   models2.Company{ID: 1, Name: "test"},
 	}
-	models.DB.Create(&user)
+	models2.DB.Create(&user)
 }
 
 func Test_query_belongs_to(t *testing.T) {
 
-	user := models.User{}
-	models.DB.First(&user)
+	user := models2.User{}
+	models2.DB.First(&user)
 	fmt.Println(user)
 	fmt.Println(user.Company)
 
@@ -34,8 +34,8 @@ func Test_query_belongs_to(t *testing.T) {
 
 func Test_preload_belongs_to(t *testing.T) {
 
-	user := models.User{}
-	models.DB.Preload("Company").First(&user)
+	user := models2.User{}
+	models2.DB.Preload("Company").First(&user)
 	fmt.Println(user)
 	fmt.Println(user.Company)
 
@@ -43,10 +43,10 @@ func Test_preload_belongs_to(t *testing.T) {
 
 func TestUpdateHook(t *testing.T) {
 
-	user := models.User{}
-	models.DB.First(&user)
+	user := models2.User{}
+	models2.DB.First(&user)
 
 	fmt.Println(user.ID)
-	models.DB.Model(&user).Updates(map[string]interface{}{"name": "afterUpdated  hhh "})
+	models2.DB.Model(&user).Updates(map[string]interface{}{"name": "afterUpdated  hhh "})
 
 }

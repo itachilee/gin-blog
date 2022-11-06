@@ -6,7 +6,7 @@ import (
 	"log"
 	"strings"
 
-	setting "github.com/itachilee/ginblog/pkg/setting"
+	setting "github.com/itachilee/ginblog/internal/setting"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"

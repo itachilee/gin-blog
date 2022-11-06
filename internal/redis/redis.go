@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/go-redis/redis/v8"
-	setting "github.com/itachilee/ginblog/pkg/setting"
+	setting "github.com/itachilee/ginblog/internal/setting"
 )
 
 var ctx = context.Background()

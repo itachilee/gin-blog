@@ -1,7 +1,7 @@
 package util
 
 import (
-	"github.com/itachilee/ginblog/models"
+	models2 "github.com/itachilee/ginblog/internal/models"
 	"log"
 	"time"
 
@@ -15,11 +15,11 @@ func InitCron() {
 
 	c.AddFunc("* 1 * * * *", func() {
 		log.Println("Running models.CleanAllTag...")
-		models.CleanAllTag()
+		models2.CleanAllTag()
 	})
 	c.AddFunc("* 1 * * * *", func() {
 		log.Println("Running models.CleanAllArticle...")
-		models.CleanAllArticle()
+		models2.CleanAllArticle()
 	})
 
 	c.Start()

@@ -2,8 +2,8 @@ package api
 
 import (
 	"fmt"
-	"github.com/itachilee/ginblog/pkg/e"
-	"github.com/itachilee/ginblog/pkg/upload"
+	"github.com/itachilee/ginblog/internal/e"
+	"github.com/itachilee/ginblog/internal/upload"
 	"log"
 	"net/http"
 

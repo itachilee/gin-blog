@@ -2,10 +2,10 @@ package main
 
 import (
 	"fmt"
-	"github.com/itachilee/ginblog/models"
-	"github.com/itachilee/ginblog/pkg/redis"
-	"github.com/itachilee/ginblog/pkg/setting"
-	"github.com/itachilee/ginblog/routers"
+	"github.com/itachilee/ginblog/internal/models"
+	"github.com/itachilee/ginblog/internal/redis"
+	"github.com/itachilee/ginblog/internal/routers"
+	"github.com/itachilee/ginblog/internal/setting"
 	"net/http"
 	// "sync"
 )

@@ -1,10 +1,10 @@
 package v1
 
 import (
-	"github.com/itachilee/ginblog/models"
-	"github.com/itachilee/ginblog/pkg/e"
-	"github.com/itachilee/ginblog/pkg/setting"
-	"github.com/itachilee/ginblog/pkg/util"
+	"github.com/itachilee/ginblog/internal/e"
+	models2 "github.com/itachilee/ginblog/internal/models"
+	"github.com/itachilee/ginblog/internal/setting"
+	"github.com/itachilee/ginblog/internal/util"
 	"log"
 	"net/http"
 
@@ -24,8 +24,8 @@ func GetArticle(c *gin.Context) {
 	code := e.INVALID_PARAMS
 	var data interface{}
 	if !valid.HasErrors() {
-		if models.ExistArticleByID(id) {
-			data = models.GetArticle(id)
+		if models2.ExistArticleByID(id) {
+			data = models2.GetArticle(id)
 			code = e.SUCCESS
 		} else {
 			code = e.ERROR_NOT_EXIST_ARTICLE
@@ -69,8 +69,8 @@ func GetArticles(c *gin.Context) {
 	if !valid.HasErrors() {
 		code = e.SUCCESS
 
-		data["lists"] = models.GetArticles(util.GetPage(c), setting.AppSetting.PageSize, maps)
-		data["total"] = models.GetArticleTotal(maps)
+		data["lists"] = models2.GetArticles(util.GetPage(c), setting.AppSetting.PageSize, maps)
+		data["total"] = models2.GetArticleTotal(maps)
 
 	} else {
 		for _, err := range valid.Errors {
@@ -104,7 +104,7 @@ func AddArticle(c *gin.Context) {
 
 	code := e.INVALID_PARAMS
 	if !valid.HasErrors() {
-		if models.ExistTagByID(tagId) {
+		if models2.ExistTagByID(tagId) {
 			data := make(map[string]interface{})
 			data["tag_id"] = tagId
 			data["title"] = title
@@ -113,7 +113,7 @@ func AddArticle(c *gin.Context) {
 			data["created_by"] = createdBy
 			data["state"] = state
 
-			models.AddArticle(data)
+			models2.AddArticle(data)
 			code = e.SUCCESS
 		} else {
 			code = e.ERROR_NOT_EXIST_TAG
@@ -157,8 +157,8 @@ func EditArticle(c *gin.Context) {
 
 	code := e.INVALID_PARAMS
 	if !valid.HasErrors() {
-		if models.ExistArticleByID(id) {
-			if models.ExistTagByID(tagId) {
+		if models2.ExistArticleByID(id) {
+			if models2.ExistTagByID(tagId) {
 				data := make(map[string]interface{})
 				if tagId > 0 {
 					data["tag_id"] = tagId
@@ -175,7 +175,7 @@ func EditArticle(c *gin.Context) {
 
 				data["modified_by"] = modifiedBy
 
-				models.EditArticle(id, data)
+				models2.EditArticle(id, data)
 				code = e.SUCCESS
 			} else {
 				code = e.ERROR_NOT_EXIST_TAG
@@ -205,8 +205,8 @@ func DeleteArticle(c *gin.Context) {
 
 	code := e.INVALID_PARAMS
 	if !valid.HasErrors() {
-		if models.ExistArticleByID(id) {
-			models.DeleteArticle(id)
+		if models2.ExistArticleByID(id) {
+			models2.DeleteArticle(id)
 			code = e.SUCCESS
 		} else {
 			code = e.ERROR_NOT_EXIST_ARTICLE

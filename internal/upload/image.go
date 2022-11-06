@@ -2,9 +2,9 @@ package upload
 
 import (
 	"fmt"
-	"github.com/itachilee/ginblog/pkg/file"
-	"github.com/itachilee/ginblog/pkg/setting"
-	"github.com/itachilee/ginblog/pkg/util"
+	"github.com/itachilee/ginblog/internal/file"
+	"github.com/itachilee/ginblog/internal/setting"
+	"github.com/itachilee/ginblog/internal/util"
 	"log"
 	"mime/multipart"
 	"os"

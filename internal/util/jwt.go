@@ -1,7 +1,7 @@
 package util
 
 import (
-	"github.com/itachilee/ginblog/pkg/setting"
+	"github.com/itachilee/ginblog/internal/setting"
 	"time"
 
 	jwt "github.com/golang-jwt/jwt"

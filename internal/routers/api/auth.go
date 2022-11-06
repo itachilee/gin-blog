@@ -2,9 +2,9 @@ package api
 
 import (
 	"fmt"
-	"github.com/itachilee/ginblog/models"
-	"github.com/itachilee/ginblog/pkg/e"
-	"github.com/itachilee/ginblog/pkg/util"
+	"github.com/itachilee/ginblog/internal/e"
+	"github.com/itachilee/ginblog/internal/models"
+	"github.com/itachilee/ginblog/internal/util"
 	"net/http"
 
 	"github.com/astaxie/beego/validation"
