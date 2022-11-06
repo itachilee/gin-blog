@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/itachilee/ginblog/models"
 	"github.com/itachilee/ginblog/pkg/e"
-	"github.com/itachilee/ginblog/pkg/logging"
 	"github.com/itachilee/ginblog/pkg/util"
 	"net/http"
 
@@ -45,7 +44,7 @@ func GetAuth(c *gin.Context) {
 
 	} else {
 		for _, err := range vaild.Errors {
-			logging.Info(err.Key, err.Message)
+			fmt.Println(err.Key, err.Message)
 		}
 
 	}

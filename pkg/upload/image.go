@@ -3,7 +3,6 @@ package upload
 import (
 	"fmt"
 	"github.com/itachilee/ginblog/pkg/file"
-	"github.com/itachilee/ginblog/pkg/logging"
 	"github.com/itachilee/ginblog/pkg/setting"
 	"github.com/itachilee/ginblog/pkg/util"
 	"log"
@@ -48,7 +47,6 @@ func CheckImageSize(f multipart.File) bool {
 	size, err := file.GetSize(f)
 	if err != nil {
 		log.Println(err)
-		logging.Warn(err)
 		return false
 	}
 

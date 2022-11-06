@@ -1,8 +1,8 @@
 package api
 
 import (
+	"fmt"
 	"github.com/itachilee/ginblog/pkg/e"
-	"github.com/itachilee/ginblog/pkg/logging"
 	"github.com/itachilee/ginblog/pkg/upload"
 	"log"
 	"net/http"
@@ -16,7 +16,6 @@ func UploadImage(c *gin.Context) {
 	data := make(map[string]string)
 	file, image, err := c.Request.FormFile("image")
 	if err != nil {
-		logging.Warn(err)
 		code = e.ERROR
 		c.JSON(http.StatusOK, gin.H{
 			"code": code,
@@ -38,10 +37,10 @@ func UploadImage(c *gin.Context) {
 		} else {
 			err := upload.CheckImage(fullPath)
 			if err != nil {
-				logging.Warn(err)
+				fmt.Println(err)
 				code = e.ERROR_UPLOAD_CHECK_IMAGE_FAIL
 			} else if err := c.SaveUploadedFile(image, src); err != nil {
-				logging.Warn(err)
+				fmt.Println(err)
 				code = e.ERROR_UPLOAD_SAVE_IMAGE_FAIL
 			} else {
 				data["image_url"] = upload.GetImageFullUrl(imageName)

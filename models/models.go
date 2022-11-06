@@ -2,6 +2,7 @@ package models
 
 import (
 	"fmt"
+	"gorm.io/gorm/logger"
 	"log"
 	"strings"
 
@@ -30,6 +31,7 @@ func InitDb() {
 		DontSupportRenameColumn:   true,  // `change` when rename column, rename column not supported before MySQL 8, MariaDB
 		SkipInitializeWithVersion: false, // auto configure based on currently MySQL version
 	}), &gorm.Config{
+		Logger: logger.Default.LogMode(logger.Info),
 		NamingStrategy: schema.NamingStrategy{
 			TablePrefix:   "blog_",                           // table name prefix, table for `User` would be `t_users`
 			SingularTable: true,                              // use singular table name, table for `User` would be `user` with this option enabled
@@ -42,6 +44,7 @@ func InitDb() {
 	}
 
 	//db.AutoMigrate(&Gushici{})
+	DB.AutoMigrate(&User{}, &Company{})
 
 }
 
