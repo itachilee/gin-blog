@@ -2,45 +2,47 @@ package main
 
 import (
 	"fmt"
-	"github.com/itachilee/ginblog/internal/models"
-	"github.com/itachilee/ginblog/internal/redis"
+	"github.com/itachilee/ginblog/global"
 	"github.com/itachilee/ginblog/internal/routers"
-	"github.com/itachilee/ginblog/internal/setting"
 	"net/http"
 	// "sync"
 )
 
 func init() {
 
-	setting.Setup()
-	models.InitDb()
-	redis.InitRedis()
+	global.Setup()
+
+	global.SetupDBEngine()
+
+	//redis.InitRedis()
 }
 
+// 添加注释以描述 server 信息
+// @title           Swagger Example API
+// @version         1.0
+// @description     This is a sample server celler server.
+// @termsOfService  http://swagger.io/terms/
+
+// @contact.name   API Support
+// @contact.url    http://www.swagger.io/support
+// @contact.email  support@swagger.io
+
+// @license.name  Apache 2.0
+// @license.url   http://www.apache.org/licenses/LICENSE-2.0.html
+
+// @host      localhost:8080
+// @BasePath  /api/v1
+
+// @securityDefinitions.basic  BasicAuth
 func main() {
-
-	// endless.DefaultReadTimeOut = setting.ServerSetting.ReadTimeout
-	// endless.DefaultWriteTimeOut = setting.ServerSetting.WriteTimeout
-	// endless.DefaultMaxHeaderBytes = 1 << 20
-	// endPoint := fmt.Sprintf(":%d", setting.ServerSetting.HttpPort)
-	// server := endless.NewServer(endPoint, routers.InitRouter())
-	// server.BeforeBegin = func(add string) {
-	// 	log.Printf("Actual pid is %d", syscall.Getpid())
-	// }
-
-	// err := server.ListenAndServe()
-	// if err != nil {
-	// 	log.Printf("Server err:%v", err)
-	// }
-	// util.InitCron()
 
 	routersInit := routers.InitRouter()
 
 	s := &http.Server{
-		Addr:           fmt.Sprintf(":%d", setting.ServerSetting.HttpPort),
+		Addr:           fmt.Sprintf(":%d", global.ServerSetting.HttpPort),
 		Handler:        routersInit,
-		ReadTimeout:    setting.ServerSetting.ReadTimeout,
-		WriteTimeout:   setting.ServerSetting.WriteTimeout,
+		ReadTimeout:    global.ServerSetting.ReadTimeout,
+		WriteTimeout:   global.ServerSetting.WriteTimeout,
 		MaxHeaderBytes: 1 << 20,
 	}
 	s.ListenAndServe()

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/casbin/casbin/v2"
 	"github.com/casbin/casbin/v2/model"
-	xormadapter "github.com/casbin/xorm-adapter/v2"
+	gormadapter "github.com/casbin/gorm-adapter/v3"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/stretchr/testify/suite"
 	"log"
@@ -15,7 +15,7 @@ func Test_casbin(t *testing.T) {
 
 	suite.Run(t, new(MyTestSuit))
 	// 使用 MySQL 数据库初始化一个 Xorm 适配器
-	a, err := xormadapter.NewAdapter("mysql", "root:root@tcp(127.0.0.1:3306)/blog", true)
+	a, err := gormadapter.NewAdapter("mysql", "root:root@tcp(127.0.0.1:3306)/blog", true)
 	if err != nil {
 		log.Fatalf("error: adapter: %s", err)
 	}

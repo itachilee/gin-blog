@@ -1,47 +1,52 @@
 package routers
 
 import (
-	"github.com/itachilee/ginblog/internal/middleware/jwt"
-	api2 "github.com/itachilee/ginblog/internal/routers/api"
-	v12 "github.com/itachilee/ginblog/internal/routers/api/v1"
-	"github.com/itachilee/ginblog/internal/setting"
-	"github.com/itachilee/ginblog/internal/upload"
+	"github.com/itachilee/ginblog/global"
+	"github.com/itachilee/ginblog/internal/middleware"
+	v1 "github.com/itachilee/ginblog/internal/routers/api/v1"
+	"github.com/itachilee/ginblog/pkg/upload"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	_ "github.com/itachilee/ginblog/docs" // main 文件中导入 docs 包
+
+	"github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 func InitRouter() *gin.Engine {
 	r := gin.New()
 	r.Use(gin.Logger())
 	r.Use(gin.Recovery())
-	gin.SetMode(setting.ServerSetting.RunMode)
+	gin.SetMode(global.ServerSetting.RunMode)
 	r.StaticFS("/upload/images", http.Dir(upload.GetImageFullPath()))
-	// r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-	r.GET("/auth", api2.GetAuth)
-	r.POST("/upload", api2.UploadImage)
-	apiv1 := r.Group("/api/v1")
-	apiv1.Use(jwt.JWT())
-	{
-		//获取标签列表
-		apiv1.GET("/tags", v12.GetTags)
-		//新建标签
-		apiv1.POST("/tags", v12.AddTag)
-		//更新指定标签
-		apiv1.PUT("/tags/:id", v12.EditTag)
-		//删除指定标签
-		apiv1.DELETE("/tags/:id", v12.DeleteTag)
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
-		//获取文章列表
-		apiv1.GET("/articles", v12.GetArticles)
-		//获取指定文章
-		apiv1.GET("/articles/:id", v12.GetArticle)
-		//新建文章
-		apiv1.POST("/articles", v12.AddArticle)
-		//更新指定文章
-		apiv1.PUT("/articles/:id", v12.EditArticle)
-		//删除指定文章
-		apiv1.DELETE("/articles/:id", v12.DeleteArticle)
+	article := v1.Article{}
+	tag := v1.Tag{}
+	apiv1 := r.Group("/api/v1")
+	apiv1.Use(middleware.JWT())
+	{
+		apiv1.GET("hello", func(c *gin.Context) {
+			c.JSON(http.StatusOK, gin.H{
+				"status":  http.StatusOK,
+				"message": "pong",
+			})
+		})
+
+		apiv1.POST("/tags", tag.Create)
+		apiv1.DELETE("/tags/:id", tag.Delete)
+		apiv1.PUT("/tags/:id", tag.Update)
+		apiv1.PATCH("/tags/:id/state", tag.Update)
+		apiv1.GET("/tags", tag.List)
+		apiv1.GET("/tags/:id", tag.Get)
+
+		apiv1.POST("/articles", article.Create)
+		apiv1.DELETE("/articles/:id", article.Delete)
+		apiv1.PUT("/articles/:id", article.Update)
+		apiv1.PATCH("/articles/:id/state", article.Update)
+		apiv1.GET("/articles", article.List)
+		apiv1.GET("/articles/:id", article.Get)
 	}
 	return r
 }
