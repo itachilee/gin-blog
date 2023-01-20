@@ -4,7 +4,7 @@ import (
 	"github.com/casbin/casbin/v2"
 	"github.com/casbin/casbin/v2/model"
 	gormadapter "github.com/casbin/gorm-adapter/v3"
-	"github.com/itachilee/ginblog/internal/model"
+	"github.com/itachilee/ginblog/global"
 	"log"
 )
 
@@ -15,7 +15,7 @@ var (
 func InitEnforce() *casbin.Enforcer {
 	var err error
 	//a, err := xormadapter.NewAdapter("mysql", "root:root@tcp(127.0.0.1:3306)/blog", true)
-	a, err := gormadapter.NewAdapterByDB(model.DB)
+	a, err := gormadapter.NewAdapterByDB(global.DBEngine)
 	if err != nil {
 		log.Fatalf("error: adapter: %s", err)
 	}
