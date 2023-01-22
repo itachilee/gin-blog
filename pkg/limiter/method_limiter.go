@@ -33,7 +33,7 @@ func (m MethodLimiter) GetBucket(key string) (*ratelimit.Bucket, bool) {
 	return bucket, ok
 }
 
-func (m MethodLimiter) AddBucket(rules ...LimiterBucketRule) LimiterIface {
+func (m MethodLimiter) AddBuckets(rules ...LimiterBucketRule) LimiterIface {
 	for _, rule := range rules {
 		if _, ok := m.limiterBuckets[rule.Key]; !ok {
 			bucket := ratelimit.NewBucketWithQuantum(

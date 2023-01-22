@@ -9,7 +9,7 @@ import (
 type LimiterIface interface {
 	Key(c *gin.Context) string
 	GetBucket(key string) (*ratelimit.Bucket, bool)
-	AddBucket(rules ...LimiterBucketRule) LimiterIface
+	AddBuckets(rules ...LimiterBucketRule) LimiterIface
 }
 
 type Limiter struct {

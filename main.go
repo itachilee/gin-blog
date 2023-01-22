@@ -5,6 +5,7 @@ import (
 	"github.com/itachilee/ginblog/global"
 	"github.com/itachilee/ginblog/internal/model"
 	"github.com/itachilee/ginblog/internal/routers"
+	"github.com/itachilee/ginblog/pkg/tracer"
 	"net/http"
 	// "sync"
 )
@@ -13,18 +14,31 @@ func init() {
 
 	global.Setup()
 
-	SetupDBEngine()
+	setupDBEngine()
 	global.DBEngine.AutoMigrate(&model.Article{}, &model.Tag{}, &model.ArticleTag{}, &model.Auth{})
-
+	setupTracer()
 	//redis.InitRedis()
 }
-func SetupDBEngine() error {
+func setupDBEngine() error {
 
 	var err error
 	global.DBEngine, err = model.NewDBEngine()
 	if err != nil {
 		return err
 	}
+	return nil
+}
+
+func setupTracer() error {
+	jaegerTracer, _, err := tracer.NewJaegerTracer(
+		"blog-service",
+		"127.0.0.1:6831",
+	)
+
+	if err != nil {
+		return err
+	}
+	global.Tracer = jaegerTracer
 	return nil
 }
 
