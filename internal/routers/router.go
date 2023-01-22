@@ -23,6 +23,8 @@ func InitRouter() *gin.Engine {
 		r = gin.Default()
 		r.Use(gin.Logger())
 		r.Use(gin.Recovery())
+		r.Use(middleware.LoggerToFile())
+
 	} else {
 		r = gin.New()
 		r.Use(middleware.LoggerToFile())
@@ -40,6 +42,7 @@ func InitRouter() *gin.Engine {
 			Quantum:      10,
 		})
 	r.Use(middleware.RateLimiter(methodLimiters))
+	r.Use(middleware.Tracing())
 	gin.SetMode(global.ServerSetting.RunMode)
 	r.StaticFS("/upload/images", http.Dir(upload.GetImageFullPath()))
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
