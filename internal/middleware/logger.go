@@ -3,6 +3,7 @@ package middleware
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/itachilee/ginblog/global"
 	"github.com/sirupsen/logrus"
 	"os"
 	"path"
@@ -12,18 +13,7 @@ import (
 // 日志记录到文件
 func LoggerToFile() gin.HandlerFunc {
 
-	logFilePath := ""
-	logFileName := " " // config.LOG_FILE_NAME
-
-	//日志文件
-	fileName := path.Join(logFilePath, logFileName)
-
-	//写入文件
-	src, err := os.OpenFile(fileName, os.O_APPEND|os.O_WRONLY, os.ModeAppend)
-	if err != nil {
-		fmt.Println("err", err)
-	}
-
+	src, _ := getFile()
 	//实例化
 	logger := logrus.New()
 
@@ -99,4 +89,26 @@ func LoggerToMQ() gin.HandlerFunc {
 	return func(c *gin.Context) {
 
 	}
+}
+
+func getFile() (*os.File, error) {
+	logFilePath := global.AppSetting.LogSavePath
+	logFileName := global.AppSetting.LogSaveName + "." + global.AppSetting.LogFileExt // config.LOG_FILE_NAME
+
+	//日志文件
+	fileName := path.Join(logFilePath, logFileName)
+
+	//写入文件
+	src, err := os.OpenFile(fileName, os.O_APPEND|os.O_WRONLY, os.ModeAppend)
+	if err != nil && os.IsNotExist(err) {
+		file, err := os.Create(fileName)
+		if err != nil {
+			return nil, err
+		}
+		return file, nil
+	} else {
+		fmt.Println("err", err)
+
+	}
+	return src, nil
 }

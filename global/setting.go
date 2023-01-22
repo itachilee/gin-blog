@@ -1,76 +1,26 @@
 package global
 
 import (
+	"github.com/itachilee/ginblog/pkg/setting"
 	"log"
 	"time"
 
 	"github.com/go-ini/ini"
 )
 
-type App struct {
-	JwtSecret       string
-	PageSize        int
-	MaxPageSize     int
-	RuntimeRootPath string
+var (
+	AppSetting = &setting.App{}
 
-	ImagePrefixUrl string
-	ImageSavePath  string
-	ImageMaxSize   int
-	ImageAllowExts []string
+	ServerSetting = &setting.Server{}
 
-	LogSavePath string
-	LogSaveName string
-	LogFileExt  string
-	TimeFormat  string
-}
+	DatabaseSetting = &setting.Database{}
 
-var AppSetting = &App{}
+	RedisSetting = &setting.Redis{}
 
-type Server struct {
-	RunMode      string
-	HttpPort     int
-	ReadTimeout  time.Duration
-	WriteTimeout time.Duration
-}
+	MqttSetting = &setting.Mqtt{}
 
-var ServerSetting = &Server{}
-
-type Database struct {
-	Type        string
-	User        string
-	Password    string
-	Host        string
-	Port        string
-	Name        string
-	TablePrefix string
-}
-
-var DatabaseSetting = &Database{}
-
-type Redis struct {
-	Addr     string
-	Username string
-	Password string
-	Db       int
-}
-
-var RedisSetting = &Redis{}
-
-type Mqtt struct {
-	Host     string
-	Port     int
-	Username string
-	Password string
-}
-
-var MqttSetting = &Mqtt{}
-
-type Jwt struct {
-	ExpiresSpan int64
-	Issuer      string
-}
-
-var JwtSetting = &Jwt{}
+	JWTSetting = &setting.JWT{}
+)
 
 func Setup() {
 	Cfg, err := ini.Load("conf/app.ini")
@@ -106,7 +56,7 @@ func Setup() {
 		log.Fatalf("Cfg.MapTo MqttSetting err: %v", err)
 	}
 
-	err = Cfg.Section("jwt").MapTo(JwtSetting)
+	err = Cfg.Section("jwt").MapTo(JWTSetting)
 	if err != nil {
 		log.Fatalf("Cfg.MapTo JwtSetting err: %v", err)
 	}

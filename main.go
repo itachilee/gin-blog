@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/itachilee/ginblog/global"
+	"github.com/itachilee/ginblog/internal/model"
 	"github.com/itachilee/ginblog/internal/routers"
 	"net/http"
 	// "sync"
@@ -12,9 +13,19 @@ func init() {
 
 	global.Setup()
 
-	global.SetupDBEngine()
+	SetupDBEngine()
+	global.DBEngine.AutoMigrate(&model.Article{}, &model.Tag{}, &model.ArticleTag{}, &model.Auth{})
 
 	//redis.InitRedis()
+}
+func SetupDBEngine() error {
+
+	var err error
+	global.DBEngine, err = model.NewDBEngine()
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 // 添加注释以描述 server 信息

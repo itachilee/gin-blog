@@ -3,13 +3,12 @@ package model
 import (
 	"fmt"
 	"github.com/itachilee/ginblog/global"
-	"gorm.io/gorm/logger"
-	"log"
-	"strings"
-
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 	"gorm.io/gorm/schema"
+	"log"
+	"strings"
 )
 
 // Setup initializes the database instance
@@ -40,5 +39,4 @@ func NewDBEngine() (*gorm.DB, error) {
 	}
 
 	return db, nil
-	//DB.AutoMigrate(	)
 }
