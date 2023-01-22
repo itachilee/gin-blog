@@ -52,3 +52,13 @@ type JWT struct {
 	Issuer string
 	Expire time.Duration
 }
+
+type Email struct {
+	Host     string
+	Port     int
+	UserName string
+	Password string
+	IsSSL    bool
+	From     string
+	To       []string `delim:"|" `
+}
