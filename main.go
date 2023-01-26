@@ -1,12 +1,18 @@
 package main
 
 import (
+	"context"
+	"flag"
 	"fmt"
 	"github.com/itachilee/ginblog/global"
 	"github.com/itachilee/ginblog/internal/model"
 	"github.com/itachilee/ginblog/internal/routers"
 	"github.com/itachilee/ginblog/pkg/tracer"
 	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
 	// "sync"
 )
 
@@ -17,6 +23,7 @@ func init() {
 	setupDBEngine()
 	global.DBEngine.AutoMigrate(&model.Article{}, &model.Tag{}, &model.ArticleTag{}, &model.Auth{})
 	setupTracer()
+	setUpFlag()
 	//redis.InitRedis()
 }
 func setupDBEngine() error {
@@ -39,6 +46,20 @@ func setupTracer() error {
 		return err
 	}
 	global.Tracer = jaegerTracer
+	return nil
+}
+
+var (
+	port    string
+	runMode string
+	config  string
+)
+
+func setUpFlag() error {
+	flag.StringVar(&port, "port", "", "启动端口")
+	flag.StringVar(&runMode, "mode", "", "启动模式")
+	flag.StringVar(&config, "config", "configs/", "指定要使用的配置文件路径")
+	flag.Parse()
 	return nil
 }
 
@@ -70,6 +91,22 @@ func main() {
 		WriteTimeout:   global.ServerSetting.WriteTimeout,
 		MaxHeaderBytes: 1 << 20,
 	}
-	s.ListenAndServe()
 
+	go func() {
+		err := s.ListenAndServe()
+		if err != nil && err != http.ErrServerClosed {
+			fmt.Printf("s.ListenAndServe() err: %v \n", err)
+		}
+	}()
+
+	quit := make(chan os.Signal)
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	<-quit
+	fmt.Printf("shuting down server \n")
+	ctx, cancer := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancer()
+	if err := s.Shutdown(ctx); err != nil {
+		fmt.Errorf("server forced to shutdown: %v \n", err)
+	}
+	fmt.Printf("server shutdown")
 }
